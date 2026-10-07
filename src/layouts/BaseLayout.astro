@@ -1,0 +1,122 @@
+---
+/* Shared layout for all CHARCOAL HUB sites. */
+import { BRAND, SITES } from '../lib/sites';
+import type { SiteConfig } from '../data/site-config';
+import '../styles/global.css';
+
+interface Props {
+  site: SiteConfig;
+  title: string;
+  description: string;
+  canonical?: string;
+  jsonLd?: Record<string, unknown>[];
+  ogType?: string;
+  noindex?: boolean;
+  breadcrumbs?: { name: string; url: string }[];
+}
+
+const {
+  site,
+  title,
+  description,
+  canonical,
+  jsonLd = [],
+  ogType = 'website',
+  noindex = false,
+  breadcrumbs = [],
+} = Astro.props;
+
+const fullTitle = site.siteKey === 'main' ? title : `${title} | ${site.name}`;
+---
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    {noindex ? <meta name="robots" content="noindex,follow" /> : <meta name="robots" content="index,follow" />}
+    {canonical && <link rel="canonical" href={canonical} />}
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta property="og:site_name" content={BRAND} />
+    <meta property="og:type" content={ogType} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    {canonical && <meta property="og:url" content={canonical} />}
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="generator" content={Astro.generator} />
+    {jsonLd.map((ld) => (
+      <script type="application/ld+json" set:html={JSON.stringify(ld)} />
+    ))}
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="container">
+        <a class="brand" href="/">
+          <img class="brand-mark" src="/logo.svg" alt="" width="26" height="26" />
+          <span>{site.name}</span>
+        </a>
+        <nav class="nav" aria-label="Primary">
+          {site.nav.map((item) => (
+            <a
+              class={item.href.includes('/request-quote/') ? 'nav-cta' : undefined}
+              href={item.href}
+              target={item.external ? '_blank' : undefined}
+              rel={item.external ? 'noopener' : undefined}
+            >
+              {item.label}
+            </a>
+          ))}
+          {
+            site.siteKey !== 'main' && !site.nav.some((i) => i.href.includes('/request-quote/')) && (
+              <a class="nav-cta" href={`${SITES.main}/request-quote/`} target="_blank" rel="noopener">Request a Quote</a>
+            )
+          }
+        </nav>
+      </div>
+    </header>
+
+    {
+      breadcrumbs.length > 0 && (
+        <nav class="breadcrumbs container" aria-label="Breadcrumb">
+          {breadcrumbs.map((b, i) => (
+            <span>
+              {i > 0 && <span class="sep">/</span>}
+              {i === breadcrumbs.length - 1 ? <span>{b.name}</span> : <a href={b.url}>{b.name}</a>}
+            </span>
+          ))}
+        </nav>
+      )
+    }
+
+    <main>
+      <slot />
+    </main>
+
+    <footer class="site-footer">
+      <div class="container">
+        <div class="footer-grid">
+          {
+            site.footerCols.map((col) => (
+              <div>
+                <h4>{col.title}</h4>
+                <ul>
+                  {col.links.map((l) => (
+                    <li><a href={l.href} target={l.external ? '_blank' : undefined} rel={l.external ? 'noopener' : undefined}>{l.label}</a></li>
+                  ))}
+                </ul>
+              </div>
+            ))
+          }
+        </div>
+        <div class="footer-bottom">
+          <p>
+            © {new Date().getFullYear()} {BRAND}. Sourcing and product intelligence for global B2B charcoal buyers.
+            Product, manufacturer and testing data are labeled by verification status and source; no fabricated claims.
+          </p>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

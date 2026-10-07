@@ -1,0 +1,101 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+import { site } from '../../data/site-config';
+import { SITES } from '../../lib/sites';
+import { breadcrumbJsonLd, organizationJsonLd } from '../../lib/seo';
+
+const origin = SITES.manufacturer;
+const canonical = `${origin}/manufacturers/`;
+
+const crumbs = [
+  { name: 'Home', url: `${origin}/` },
+  { name: 'Manufacturers', url: canonical },
+];
+
+/* Published manufacturer profiles. Empty by design: no fabricated entries. */
+const manufacturers = await getCollection('manufacturers');
+
+const jsonLd = [
+  organizationJsonLd({
+    id: `${origin}/`,
+    name: site.name,
+    description: site.description,
+    logo: `${origin}/logo.svg`,
+  }),
+  breadcrumbJsonLd(crumbs),
+];
+---
+
+<BaseLayout
+  site={site}
+  title="Manufacturer Directory"
+  description="The Charcoal Hub manufacturer directory. Profiles are published only once they carry a source and a verification status; the published set is currently empty pending supplier verification."
+  canonical={canonical}
+  jsonLd={jsonLd}
+  breadcrumbs={crumbs}
+>
+  <div class="container">
+    <div class="page-title">
+      <h1>Manufacturer directory</h1>
+      <p class="lede">
+        Every profile in this directory follows the same structure and carries a verification
+        status for each field.
+      </p>
+    </div>
+  </div>
+
+  <section class="section">
+    <div class="container">
+      {
+        manufacturers.length === 0 ? (
+          <div class="callout-pending">
+            <span class="callout-title">Data pending — supplier verification in progress.</span>
+            <p>
+              There are currently <strong>no published manufacturer profiles</strong>. This is a
+              deliberate, honest state: we do not fill the directory with invented companies or
+              placeholder factories. A profile appears here only when it has a real source and a
+              verification status.
+            </p>
+          </div>
+        ) : (
+          <div class="grid grid-2">
+            {manufacturers.map((m) => (
+              <div class="card">
+                <h3><a href={`/manufacturers/${m.id}/`}>{m.data.name ?? m.id}</a></h3>
+                <p>{m.data.location ?? 'Location not yet verified.'}</p>
+                {m.data.verification_status && (
+                  <span class="badge badge-muted">{m.data.verification_status}</span>
+                )}
+              </div>
+            ))}
+          </div>
+        )
+      }
+
+      <div class="section-head" style="margin-top:2rem">
+        <h2>How a profile is built</h2>
+        <p>
+          Each published profile follows the fixed template:
+          Company Overview → Products → Manufacturing → Production Capacity → Quality Control →
+          Testing → OEM → Packaging → Export → Verification → Related Products → Request Quote.
+        </p>
+      </div>
+
+      <p class="meta-line">
+        Learn how a profile earns its status: <a href="/verification/">verification model</a> ·
+        <a href="/how-we-qualify/">how we qualify</a>.
+      </p>
+    </div>
+  </section>
+
+  <section class="section section-alt">
+    <div class="container">
+      <div class="cta-banner">
+        <h2>Need a manufacturer qualified?</h2>
+        <p>The sourcing desk accepts briefs and returns supplier information with its verification status attached.</p>
+        <a class="btn btn-primary" href={`${SITES.main}/request-quote/`} target="_blank" rel="noopener">Request a Quote</a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

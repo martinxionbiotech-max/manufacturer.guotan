@@ -1,0 +1,30 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { site } from '../data/site-config';
+import { SITES } from '../lib/sites';
+
+const canonical = `${SITES.manufacturer}/404/`;
+---
+
+<BaseLayout
+  site={site}
+  title="Page Not Found"
+  description="This page could not be found on the Charcoal Hub manufacturer sub-site."
+  canonical={canonical}
+  noindex={true}
+>
+  <div class="container">
+    <div class="page-title">
+      <p class="eyebrow">Error 404</p>
+      <h1>Page not found</h1>
+      <p class="lede">
+        The page you were looking for does not exist on this sub-site.
+      </p>
+      <div class="cta-row">
+        <a class="btn btn-secondary" href="/">Back to home</a>
+        <a class="btn btn-ghost" href="/manufacturers/">Manufacturer directory</a>
+        <a class="btn btn-ghost" href="/verification/">Verification model</a>
+      </div>
+    </div>
+  </div>
+</BaseLayout>

@@ -1,0 +1,239 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { site } from '../data/site-config';
+import { SITES, BRAND } from '../lib/sites';
+import { organizationJsonLd, webSiteJsonLd, datasetJsonLd } from '../lib/seo';
+
+const origin = SITES.manufacturer;
+const canonical = `${origin}/`;
+
+const statuses = [
+  {
+    name: 'Verified',
+    cls: 'status-verified',
+    short: 'Reliable source, or on-site / document verification.',
+    body: 'Backed by a reliable, independently checkable source, or confirmed through on-site inspection or document review. The profile states only what we can actually stand behind.',
+  },
+  {
+    name: 'Supplier Reported',
+    cls: 'status-supplier',
+    short: 'Provided by the supplier — not presented as fact.',
+    body: 'Data provided by the supplier about themselves. It is published for context and traceability and is always labelled as self-reported. It is never presented as a verified fact.',
+  },
+  {
+    name: 'Third-Party Verified',
+    cls: 'status-third-party',
+    short: 'Supported by third-party testing or certification.',
+    body: 'Supported by independent third-party evidence — for example an accredited laboratory test report or a certification body — rather than by our own or the supplier’s statement alone.',
+  },
+  {
+    name: 'Unverified',
+    cls: 'status-unverified',
+    short: 'Not yet checked against any source.',
+    body: 'Not yet verified against any source. Treated as unconfirmed and never relied on as a fact until it moves to a stronger status.',
+  },
+];
+
+const profileSections = [
+  'Company Overview',
+  'Products',
+  'Manufacturing',
+  'Production Capacity',
+  'Quality Control',
+  'Testing',
+  'OEM',
+  'Packaging',
+  'Export',
+  'Verification',
+  'Related Products',
+  'Request Quote',
+];
+
+const jsonLd = [
+  organizationJsonLd({
+    id: `${origin}/`,
+    name: site.name,
+    description: site.description,
+    logo: `${origin}/logo.svg`,
+  }),
+  webSiteJsonLd({
+    id: `${origin}/#website`,
+    name: site.name,
+    description: site.description,
+  }),
+  datasetJsonLd({
+    id: `${origin}/#manufacturer-schema`,
+    name: 'Charcoal Hub manufacturer profile schema',
+    description:
+      'The field schema (identity, operations, products, capacity, quality, verification) used for Charcoal Hub manufacturer profiles. Entries are published only after sourcing and verification; the published profile set is currently empty.',
+  }),
+];
+---
+
+<BaseLayout
+  site={site}
+  title="Manufacturer Intelligence & Supplier Qualification"
+  description="How Charcoal Hub collects, labels and verifies manufacturer data for coconut shell and biomass charcoal. Profiles are published only with a source and a verification status."
+  canonical={canonical}
+  jsonLd={jsonLd}
+>
+  <section class="hero">
+    <div class="container">
+      <p class="eyebrow">Charcoal Hub · Manufacturer Sub-site</p>
+      <h1>Manufacturer intelligence built on verifiable evidence</h1>
+      <p class="lede">
+        This sub-site is the manufacturer and supplier-qualification layer of Charcoal Hub. Its
+        job is to describe <strong>how</strong> manufacturer data is sourced, labelled and
+        verified — and to publish a profile only once it can carry an honest verification status.
+      </p>
+      <div class="cta-row">
+        <a class="btn btn-primary" href={`${SITES.main}/request-quote/`} target="_blank" rel="noopener">Request a Quote</a>
+        <a class="btn btn-secondary" href="/verification/">How verification works</a>
+        <a class="btn btn-ghost" href="/how-we-qualify/">Our qualification process</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="callout-pending">
+        <span class="callout-title">Manufacturer profiles: data pending — supplier verification in progress.</span>
+        <p>
+          The published manufacturer set is currently <strong>empty by design</strong>. We do not
+          publish placeholder factories, sample companies, or invented examples. A profile appears
+          here only when it has a real source and a verification status. Until then, this site
+          documents the model, the process and the labels — nothing else.
+        </p>
+      </div>
+
+      <div class="section-head">
+        <h2>What this sub-site is</h2>
+      </div>
+      <div class="grid grid-2">
+        <div class="card">
+          <h3>Manufacturer intelligence</h3>
+          <p>
+            A structured, field-by-field record of a manufacturer’s identity, products, materials,
+            capacity, quality control, testing evidence, packaging, export posture and commercial
+            terms — each field carrying its own provenance.
+          </p>
+        </div>
+        <div class="card">
+          <h3>Supplier qualification</h3>
+          <p>
+            A defined workflow for turning an unverified lead into a qualified supplier:
+            document review, sample evaluation, batch testing, and on-site or third-party
+            verification.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-alt">
+    <div class="container">
+      <div class="section-head">
+        <h2>The qualification model</h2>
+        <p>
+          Every manufacturer profile is a set of labelled fields. Qualification is the process of
+          moving those fields from unconfirmed to confirmed. Three principles hold throughout:
+        </p>
+      </div>
+      <div class="grid grid-3">
+        <div class="card">
+          <h3>1 · No fabrication</h3>
+          <p>Unknown data is left empty. A company name, location, capacity or certification is never invented to make a profile look complete.</p>
+        </div>
+        <div class="card">
+          <h3>2 · Source every field</h3>
+          <p>Each published field traces back to a source — the supplier, a document, a test report, or our own inspection.</p>
+        </div>
+        <div class="card">
+          <h3>3 · Label the strength</h3>
+          <p>Each profile carries exactly one verification status that says how well supported it is. Self-reported data is labelled as self-reported.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="section-head">
+        <h2>The four verification statuses</h2>
+        <p>
+          These four levels are the vocabulary of this site. Every profile carries one of them,
+          and the level is shown wherever the data is shown.
+        </p>
+      </div>
+      <div class="grid grid-2">
+        {
+          statuses.map((s) => (
+            <div class="card">
+              <h3>
+                <span class={`badge ${s.cls}`}>{s.name}</span>
+              </h3>
+              <p><strong>{s.short}</strong></p>
+              <p>{s.body}</p>
+            </div>
+          ))
+        }
+      </div>
+      <p class="meta-line" style="margin-top:1.5rem">
+        Read the full model on the <a href="/verification/">verification page</a>.
+      </p>
+    </div>
+  </section>
+
+  <section class="section section-alt">
+    <div class="container">
+      <div class="section-head">
+        <h2>The manufacturer profile template</h2>
+        <p>When a profile is published, it follows this fixed structure so profiles stay comparable:</p>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>#</th><th>Section</th><th>What it covers</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>1</td><td class="spec-value">Company Overview</td><td>Identity, location, factory type, establishment.</td></tr>
+            <tr><td>2</td><td class="spec-value">Products</td><td>Main products and applications.</td></tr>
+            <tr><td>3</td><td class="spec-value">Manufacturing</td><td>Raw materials, factory and process.</td></tr>
+            <tr><td>4</td><td class="spec-value">Production Capacity</td><td>Stated capacity and production lines.</td></tr>
+            <tr><td>5</td><td class="spec-value">Quality Control</td><td>QC practices as reported / observed.</td></tr>
+            <tr><td>6</td><td class="spec-value">Testing</td><td>Testing evidence and test parameters.</td></tr>
+            <tr><td>7</td><td class="spec-value">OEM</td><td>OEM availability.</td></tr>
+            <tr><td>8</td><td class="spec-value">Packaging</td><td>Packaging formats.</td></tr>
+            <tr><td>9</td><td class="spec-value">Export</td><td>Export markets and MOQ.</td></tr>
+            <tr><td>10</td><td class="spec-value">Verification</td><td>Status, source and last-verified date.</td></tr>
+            <tr><td>11</td><td class="spec-value">Related Products</td><td>Linked product records.</td></tr>
+            <tr><td>12</td><td class="spec-value">Request Quote</td><td>Route to the Charcoal Hub quote desk.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="meta-line" style="margin-top:1rem">
+        The template is documented now; the profiles it renders are pending verification.
+        See the <a href="/manufacturers/">manufacturer directory</a>.
+      </p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="cta-banner">
+        <h2>Looking for a qualified charcoal supplier?</h2>
+        <p>
+          Tell the Charcoal Hub sourcing desk what you need. Qualification runs against the
+          process described on this site, and any manufacturer data you receive is labelled with
+          its verification status.
+        </p>
+        <a class="btn btn-primary" href={`${SITES.main}/request-quote/`} target="_blank" rel="noopener">Request a Quote</a>
+      </div>
+      <p class="meta-line">
+        Related: <a href={`${SITES.data}/products/`} target="_blank" rel="noopener">Product Database</a> ·
+        <a href={SITES.testing} target="_blank" rel="noopener">Testing &amp; Verification</a> ·
+        <a href={SITES.main} target="_blank" rel="noopener">{BRAND}</a>
+      </p>
+    </div>
+  </section>
+</BaseLayout>

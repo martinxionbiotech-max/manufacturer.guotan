@@ -1,0 +1,168 @@
+---
+/* ------------------------------------------------------------------ */
+/* Manufacturer profile template (§13).                                */
+/*                                                                     */
+/* ROUTE: /manufacturers/[name]/                                       */
+/*                                                                     */
+/* getStaticPaths() returns ZERO paths by design — the `manufacturers`  */
+/* collection is empty because no manufacturer profile is written      */
+/* until it has a real source and a verification status (§14).          */
+/* NO named manufacturer page is generated.                             */
+/*                                                                     */
+/* Fixed profile section order (§13):                                   */
+/*   1. Company Overview    2. Products       3. Manufacturing          */
+/*   4. Production Capacity 5. Quality Control 6. Testing               */
+/*   7. OEM                  8. Packaging      9. Export                */
+/*  10. Verification        11. Related Products 12. Request Quote      */
+/*                                                                     */
+/* If the entry is ever undefined (defensive fallback) the route        */
+/* renders the "data pending" state instead of a half-empty profile.    */
+/* ------------------------------------------------------------------ */
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+import type { CollectionEntry } from 'astro:content';
+import { site } from '../../data/site-config';
+import { SITES } from '../../lib/sites';
+import { breadcrumbJsonLd, organizationJsonLd } from '../../lib/seo';
+
+interface Props {
+  manufacturer?: CollectionEntry<'manufacturers'>;
+}
+
+export async function getStaticPaths() {
+  const manufacturers = await getCollection('manufacturers');
+  // Empty by design: zero manufacturer entries, zero generated pages.
+  return manufacturers.map((manufacturer) => ({
+    params: { name: manufacturer.id },
+    props: { manufacturer },
+  }));
+}
+
+const { manufacturer } = Astro.props;
+
+const origin = SITES.manufacturer;
+const name = manufacturer?.data.name ?? manufacturer?.id ?? 'Unknown manufacturer';
+const canonical = `${origin}/manufacturers/${manufacturer?.id ?? ''}`;
+const crumbs = [
+  { name: 'Home', url: `${origin}/` },
+  { name: 'Manufacturers', url: `${origin}/manufacturers/` },
+  { name, url: canonical },
+];
+
+const jsonLd = [
+  organizationJsonLd({
+    id: `${origin}/`,
+    name: site.name,
+    description: site.description,
+    logo: `${origin}/logo.svg`,
+  }),
+  breadcrumbJsonLd(crumbs),
+];
+
+/* Fields left blank when unknown — never invented (§12). */
+const list = (v: string[] | null | undefined) => (v && v.length ? v.join(', ') : null);
+---
+
+<BaseLayout
+  site={site}
+  title={name}
+  description="Manufacturer profile — data pending supplier verification."
+  canonical={canonical}
+  jsonLd={jsonLd}
+  breadcrumbs={crumbs}
+>
+  <div class="container">
+    {
+      !manufacturer ? (
+        <div class="page-title">
+          <h1>Manufacturer profile — data pending</h1>
+          <p class="lede">
+            This profile is not published. Manufacturer data appears here only once it has a real
+            source and a verification status.
+          </p>
+          <div class="callout-pending">
+            <span class="callout-title">Data pending — supplier verification in progress.</span>
+            <p>
+              No manufacturer profile has been written for this route. We do not publish invented
+              company names, locations, capacities, certifications, export markets or establishment
+              years.
+            </p>
+          </div>
+          <p class="meta-line">
+            Return to the <a href="/manufacturers/">manufacturer directory</a> or read the
+            <a href="/verification/">verification model</a>.
+          </p>
+        </div>
+      ) : (
+        <>
+          <div class="page-title">
+            <h1>{name}</h1>
+            {manufacturer.data.verification_status && (
+              <span class="badge badge-muted">{manufacturer.data.verification_status}</span>
+            )}
+          </div>
+
+          <section class="section">
+            <h2>1 · Company Overview</h2>
+            <div class="quick-facts">
+              <div class="qf"><span class="qf-label">Location</span><span class="qf-value">{manufacturer.data.location ?? '—'}</span></div>
+              <div class="qf"><span class="qf-label">Factory type</span><span class="qf-value">{manufacturer.data.factory_type ?? '—'}</span></div>
+              <div class="qf"><span class="qf-label">Factory area</span><span class="qf-value">{manufacturer.data.factory_area ?? '—'}</span></div>
+              <div class="qf"><span class="qf-label">Established</span><span class="qf-value">{manufacturer.data.established ?? '—'}</span></div>
+            </div>
+
+            <h2>2 · Products</h2>
+            <p>{list(manufacturer.data.main_products) ?? '—'}</p>
+
+            <h2>3 · Manufacturing</h2>
+            <p><strong>Raw materials:</strong> {list(manufacturer.data.raw_materials) ?? '—'}</p>
+            <p><strong>Applications:</strong> {list(manufacturer.data.applications) ?? '—'}</p>
+
+            <h2>4 · Production Capacity</h2>
+            <p><strong>Capacity:</strong> {manufacturer.data.production_capacity ?? '—'}</p>
+            <p><strong>Production lines:</strong> {manufacturer.data.production_lines ?? '—'}</p>
+
+            <h2>5 · Quality Control</h2>
+            <p>{list(manufacturer.data.quality_control) ?? '—'}</p>
+
+            <h2>6 · Testing</h2>
+            <p>{list(manufacturer.data.testing) ?? '—'}</p>
+
+            <h2>7 · OEM</h2>
+            <p>{manufacturer.data.oem === null || manufacturer.data.oem === undefined ? '—' : manufacturer.data.oem ? 'Available' : 'Not available'}</p>
+            <p><strong>Private label:</strong> {manufacturer.data.private_label === null || manufacturer.data.private_label === undefined ? '—' : manufacturer.data.private_label ? 'Available' : 'Not available'}</p>
+
+            <h2>8 · Packaging</h2>
+            <p>{list(manufacturer.data.packaging) ?? '—'}</p>
+
+            <h2>9 · Export</h2>
+            <p><strong>Export markets:</strong> {list(manufacturer.data.export_markets) ?? '—'}</p>
+            <p><strong>MOQ:</strong> {manufacturer.data.moq ?? '—'}</p>
+
+            <h2>10 · Verification</h2>
+            <div class="table-wrap">
+              <table>
+                <tbody>
+                  <tr><th>Status</th><td>{manufacturer.data.verification_status ?? '—'}</td></tr>
+                  <tr><th>Source</th><td>{manufacturer.data.data_source ?? '—'}</td></tr>
+                  <tr><th>Certifications</th><td>{list(manufacturer.data.certifications) ?? '—'}</td></tr>
+                  <tr><th>Last verified</th><td>{manufacturer.data.last_verified ?? '—'}</td></tr>
+                  <tr><th>Website</th><td>{manufacturer.data.website ?? '—'}</td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <h2>11 · Related Products</h2>
+            <p>{list(manufacturer.data.related_products) ?? '—'}</p>
+
+            <h2>12 · Request Quote</h2>
+            <p>
+              <a href={`${SITES.main}/request-quote/`} target="_blank" rel="noopener">Request a quote</a>
+              for this manufacturer through the Charcoal Hub sourcing desk.
+            </p>
+          </section>
+        </>
+      )
+    }
+  </div>
+</BaseLayout>

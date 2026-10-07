@@ -1,0 +1,175 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { site } from '../data/site-config';
+import { SITES } from '../lib/sites';
+import { breadcrumbJsonLd, organizationJsonLd } from '../lib/seo';
+
+const origin = SITES.manufacturer;
+const canonical = `${origin}/how-we-qualify/`;
+
+const crumbs = [
+  { name: 'Home', url: `${origin}/` },
+  { name: 'How We Qualify', url: canonical },
+];
+
+const steps = [
+  {
+    n: '01',
+    title: 'Document review',
+    body:
+      'We ask the supplier for the paperwork that underpins a claim: business licence, factory documentation, product specifications, and any certifications. Documents are checked for consistency and completeness before anything is relied on.',
+    output: 'A field is moved off “Unverified” only when a document actually supports it.',
+  },
+  {
+    n: '02',
+    title: 'Sample evaluation',
+    body:
+      'A physical sample is assessed against the requirements of the intended application — form, sizing, moisture, ash and other agreed parameters — using the test protocol agreed with the buyer.',
+    output: 'Sample-level results are recorded before any batch-level claim is made.',
+  },
+  {
+    n: '03',
+    title: 'Batch testing',
+    body:
+      'Production batches are tested against the agreed specification. Where independent evidence is required, testing is carried out by a third-party laboratory.',
+    output: 'Third-party results, where obtained, support the “Third-Party Verified” status.',
+  },
+  {
+    n: '04',
+    title: 'On-site / third-party verification',
+    body:
+      'Where the commercial case justifies it, a manufacturer is verified through an on-site visit and/or independent third-party verification of the specific claims being made.',
+    output: 'Fields confirmed this way can reach the “Verified” status.',
+  },
+];
+
+const jsonLd = [
+  organizationJsonLd({
+    id: `${origin}/`,
+    name: site.name,
+    description: site.description,
+    logo: `${origin}/logo.svg`,
+  }),
+  breadcrumbJsonLd(crumbs),
+];
+---
+
+<BaseLayout
+  site={site}
+  title="How We Qualify Suppliers"
+  description="The Charcoal Hub supplier qualification workflow: document review, sample evaluation, batch testing, and on-site or third-party verification. This describes our process intent, not completed verifications."
+  canonical={canonical}
+  jsonLd={jsonLd}
+  breadcrumbs={crumbs}
+>
+  <div class="container">
+    <div class="page-title">
+      <h1>How we qualify suppliers</h1>
+      <p class="lede">
+        Qualification is the workflow that moves manufacturer data from an unconfirmed claim to a
+        labelled, defensible record. This page describes the process we intend to run — it is not a
+        claim that any specific supplier has completed any stage.
+      </p>
+    </div>
+  </div>
+
+  <section class="section">
+    <div class="container">
+      <div class="callout-pending">
+        <span class="callout-title">This page describes methodology, not completed verifications.</span>
+        <p>
+          Nothing here should be read as a statement about a named manufacturer. It is the process
+          by which a profile would earn its verification status. Where no verification has been
+          performed, the data is published as “Supplier Reported” or “Unverified” — or not at all.
+        </p>
+      </div>
+
+      <div class="section-head">
+        <h2>The workflow</h2>
+        <p>Four stages, applied in order, each producing a stronger level of support than the last.</p>
+      </div>
+
+      <div class="grid grid-2">
+        {
+          steps.map((s) => (
+            <div class="card">
+              <h3>
+                <span class="badge badge-accent mono">{s.n}</span> {s.title}
+              </h3>
+              <p>{s.body}</p>
+              <p class="meta-line"><strong>Output:</strong> {s.output}</p>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-alt">
+    <div class="container">
+      <div class="prose">
+        <h2>How each stage maps to a status</h2>
+        <p>
+          The workflow is not decoration — it is how the labels on this site are earned. A stage
+          that has not been completed is not claimed.
+        </p>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Stage</th><th>Evidence produced</th><th>Can support</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="spec-value">Document review</td>
+                <td>Licences, specifications, certifications</td>
+                <td><span class="badge status-verified">Verified</span> where a document confirms the field</td>
+              </tr>
+              <tr>
+                <td class="spec-value">Sample evaluation</td>
+                <td>Measured sample parameters</td>
+                <td><span class="badge status-supplier">Supplier Reported</span> / internal record at sample level</td>
+              </tr>
+              <tr>
+                <td class="spec-value">Batch testing</td>
+                <td>Batch test results (in-house or third-party)</td>
+                <td><span class="badge status-third-party">Third-Party Verified</span> when independently tested</td>
+              </tr>
+              <tr>
+                <td class="spec-value">On-site / third-party</td>
+                <td>Inspection report, independent verification</td>
+                <td><span class="badge status-verified">Verified</span></td>
+              </tr>
+              <tr>
+                <td class="spec-value">Not yet run</td>
+                <td>None</td>
+                <td><span class="badge status-unverified">Unverified</span> until a source is found</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h2>What we do not do</h2>
+        <ul>
+          <li>We do not invent a manufacturer, a capacity, a certification, or an export market to fill a profile.</li>
+          <li>We do not publish a supplier’s own claims as if they were verified facts.</li>
+          <li>We do not present a completed-looking profile whose fields have no source.</li>
+          <li>We do not treat a passed sample as though a whole production line had been qualified.</li>
+        </ul>
+        <p>
+          See the <a href="/verification/">verification model</a> for how each of these results is
+          labelled on a profile.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="cta-banner">
+        <h2>Want a supplier qualified against this process?</h2>
+        <p>Send your specification and target market; the sourcing desk will scope the qualification steps needed.</p>
+        <a class="btn btn-primary" href={`${SITES.main}/request-quote/`} target="_blank" rel="noopener">Request a Quote</a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

@@ -1,0 +1,18 @@
+{
+  "name": "charcoal-hub-manufacturers",
+  "type": "module",
+  "version": "0.1.0",
+  "private": true,
+  "description": "CHARCOAL HUB — B2B charcoal sourcing and product intelligence platform (manufacturer.guotan).",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "check:links": "node scripts/check-links.mjs",
+    "check:data": "node scripts/check-data.mjs"
+  },
+  "dependencies": {
+    "@astrojs/sitemap": "^3.2.1",
+    "astro": "^5.7.0"
+  }
+}

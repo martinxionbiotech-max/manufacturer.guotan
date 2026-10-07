@@ -1,0 +1,212 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { site } from '../../data/site-config';
+import { SITES } from '../../lib/sites';
+import { breadcrumbJsonLd, organizationJsonLd } from '../../lib/seo';
+
+const origin = SITES.manufacturer;
+const canonical = `${origin}/verification/`;
+
+const crumbs = [
+  { name: 'Home', url: `${origin}/` },
+  { name: 'Verification', url: canonical },
+];
+
+const rows = [
+  {
+    name: 'Verified',
+    cls: 'status-verified',
+    meaning: 'A reliable source, or on-site / document verification by us, supports the field.',
+    established: 'Independent source, or our own on-site inspection or document review.',
+    presented: 'Stated as a supported fact, with the source noted.',
+  },
+  {
+    name: 'Supplier Reported',
+    cls: 'status-supplier',
+    meaning: 'The value was provided by the supplier about themselves.',
+    established: 'Supplier statement only (email, form, datasheet, website).',
+    presented: 'Labelled as self-reported. Never stated as a verified fact.',
+  },
+  {
+    name: 'Third-Party Verified',
+    cls: 'status-third-party',
+    meaning: 'Independent third-party testing or certification supports the field.',
+    established: 'Accredited lab report or certification body evidence.',
+    presented: 'Stated as third-party supported, with the evidence type noted.',
+  },
+  {
+    name: 'Unverified',
+    cls: 'status-unverified',
+    meaning: 'The field has not yet been checked against any source.',
+    established: 'No verification performed yet.',
+    presented: 'Shown as unconfirmed and not relied upon.',
+  },
+];
+
+const jsonLd = [
+  organizationJsonLd({
+    id: `${origin}/`,
+    name: site.name,
+    description: site.description,
+    logo: `${origin}/logo.svg`,
+  }),
+  breadcrumbJsonLd(crumbs),
+];
+---
+
+<BaseLayout
+  site={site}
+  title="Verification Model — The Four Statuses"
+  description="How Charcoal Hub labels manufacturer data: Verified, Supplier Reported, Third-Party Verified and Unverified — and why 'Supplier Reported' is not a verified fact."
+  canonical={canonical}
+  jsonLd={jsonLd}
+  breadcrumbs={crumbs}
+>
+  <div class="container">
+    <div class="page-title">
+      <h1>Verification model</h1>
+      <p class="lede">
+        Every manufacturer profile field carries one of four verification statuses. Statuses
+        describe <em>how well supported</em> a value is — not how good a supplier is. A single
+        profile can hold fields at different levels, and each is labelled where it appears.
+      </p>
+    </div>
+  </div>
+
+  <section class="section">
+    <div class="container">
+      <div class="grid grid-2">
+        <div class="card">
+          <h3><span class="badge status-verified">Verified</span></h3>
+          <p>
+            Supported by a reliable, independently checkable source — or confirmed through our own
+            on-site inspection or document review. This is the strongest level we assign, and it is
+            reserved for fields we can actually stand behind.
+          </p>
+        </div>
+        <div class="card">
+          <h3><span class="badge status-supplier">Supplier Reported</span></h3>
+          <p>
+            The value was provided by the supplier themselves — by email, form, datasheet or their
+            own website. It is published for context and traceability and is <strong>always
+            labelled as self-reported</strong>. We do not present it as an established fact.
+          </p>
+        </div>
+        <div class="card">
+          <h3><span class="badge status-third-party">Third-Party Verified</span></h3>
+          <p>
+            Supported by independent third-party evidence — for example an accredited laboratory
+            test report or a certification body — rather than by the supplier’s or our own
+            statement alone.
+          </p>
+        </div>
+        <div class="card">
+          <h3><span class="badge status-unverified">Unverified</span></h3>
+          <p>
+            Not yet checked against any source. Treated as unconfirmed and never relied upon as a
+            fact until the field moves to a stronger status.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-alt">
+    <div class="container">
+      <div class="section-head">
+        <h2>What each status means in practice</h2>
+        <p>The table below is the reference for how a status is established and how the field is then presented.</p>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Status</th>
+              <th>What it means</th>
+              <th>How it is established</th>
+              <th>How we present it</th>
+            </tr>
+          </thead>
+          <tbody>
+            {
+              rows.map((r) => (
+                <tr>
+                  <td><span class={`badge ${r.cls}`}>{r.name}</span></td>
+                  <td>{r.meaning}</td>
+                  <td>{r.established}</td>
+                  <td>{r.presented}</td>
+                </tr>
+              ))
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="prose">
+        <h2>Why “Supplier Reported” is not a verified fact</h2>
+        <p>
+          Self-reported data is useful: it tells a buyer what a supplier claims, and which claims
+          are worth testing. It is also the easiest thing in cross-border sourcing to get wrong,
+          because a plausible-looking number — a monthly tonnage, a certification code, an
+          export-market list — reads like a fact the moment it is published without a label.
+        </p>
+        <p>We separate the two deliberately:</p>
+        <ul>
+          <li>
+            <strong>A claim is not evidence.</strong> A supplier saying they produce
+            <em>a given volume</em> is a statement about themselves. It only becomes “Verified”
+            when a reliable source or our own inspection supports it, and only becomes
+            “Third-Party Verified” when independent testing or certification does.
+          </li>
+          <li>
+            <strong>The label travels with the data.</strong> Wherever a self-reported value is
+            shown, the “Supplier Reported” label is shown with it. It is never silently upgraded by
+            proximity to verified fields.
+          </li>
+          <li>
+            <strong>Buyers can weight it themselves.</strong> A labelled claim lets a buyer decide
+            how much to rely on it, and ask for evidence before committing — which is the point of
+            the model.
+          </li>
+        </ul>
+
+        <div class="callout">
+          <span class="callout-title">Rule of thumb</span>
+          <p>
+            If we cannot say where a value came from, we do not publish it as fact. “Supplier
+            Reported” is a label, not a shortcut around verification.
+          </p>
+        </div>
+
+        <h2>Unverified</h2>
+        <p>
+          “Unverified” is a working state, not a verdict. It means the field exists as a candidate
+          data point but has not been checked. It is never presented as confirmed, and it is the
+          first field a qualification pass will attempt to resolve.
+        </p>
+      </div>
+
+      <p class="meta-line">
+        Next: see <a href="/how-we-qualify/">how we qualify a supplier</a>, or return to the
+        <a href="/">overview</a>.
+      </p>
+    </div>
+  </section>
+
+  <section class="section section-alt">
+    <div class="container">
+      <div class="cta-banner">
+        <h2>Ask for data with its status attached</h2>
+        <p>
+          The Charcoal Hub sourcing desk will return manufacturer information with the verification
+          status of each field included.
+        </p>
+        <a class="btn btn-primary" href={`${SITES.main}/request-quote/`} target="_blank" rel="noopener">Request a Quote</a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
