@@ -11,9 +11,19 @@ raw_materials:
   - "Coconut shell"
 applications:
   - "Hookah / shisha"
-production_capacity: "12 tonnes per day (supplier-declared)"
+production_capacity: "12 tonnes per day; bulk supply up to 300 tonnes/month (supplier-declared)"
 production_lines: 2
-export_markets: null
+export_markets:
+  - "USA"
+  - "Canada"
+  - "Germany"
+  - "Turkey"
+  - "UAE"
+  - "Australia"
+  - "Russia"
+  - "UK"
+  - "Bahrain"
+  - "Czech Republic
 oem: true
 private_label: true
 packaging:
