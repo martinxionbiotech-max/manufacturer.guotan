@@ -5,7 +5,7 @@
 /* derived from the primary origin's subdomains unless overridden.    */
 /* ------------------------------------------------------------------ */
 
-const main = (process.env.SITE_URL || 'https://chinacharcoalhub.com').replace(/\/$/, '');
+const main = (process.env.SITE_URL || 'https://guotan.com').replace(/\/$/, '');
 
 function sub(name: string, def: string): string {
   const key = `SITE_${name.toUpperCase()}_URL`;
@@ -14,10 +14,10 @@ function sub(name: string, def: string): string {
 
 export const SITES = {
   main,
-  data: sub('data', 'https://data.chinacharcoalhub.com'),
-  manufacturer: sub('manufacturer', 'https://manufacturer.chinacharcoalhub.com'),
-  testing: sub('testing', 'https://testing.chinacharcoalhub.com'),
-  knowledge: sub('knowledge', 'https://knowledge.chinacharcoalhub.com'),
+  data: sub('data', 'https://data.guotan.com'),
+  manufacturer: sub('manufacturer', 'https://manufacturer.guotan.com'),
+  testing: sub('testing', 'https://testing.guotan.com'),
+  knowledge: sub('knowledge', 'https://knowledge.guotan.com'),
 } as const;
 
 export type SiteKey = keyof typeof SITES;
