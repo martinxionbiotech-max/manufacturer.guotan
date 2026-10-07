@@ -33,6 +33,8 @@ related_products: []
 # Xinxiang Casen Industrial Corporation
 
 China-based supplier listed on Alibaba for coconut shell and bamboo
-hookah/shisha charcoal. Only the company name, location and product lines are
-confirmed from the public listing; all operational fields are unrecorded until
-a supplier questionnaire or documents are received.
+hookah/shisha charcoal. A separate B2B directory entry (tradewheel.com)
+describes the same company as a supplier of feed-making machinery and food
+machines, suggesting a multi-category trading profile — the charcoal product
+line is confirmed only from the Alibaba listing. All operational fields are
+unrecorded until a supplier questionnaire or documents are received.
