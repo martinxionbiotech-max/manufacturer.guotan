@@ -61,7 +61,7 @@ const fullTitle = site.siteKey === 'main' ? title : `${title} | ${site.name}`;
         <nav class="nav" aria-label="Primary">
           {site.nav.map((item) => (
             <a
-              class={item.href.includes('/request-quote/') ? 'nav-cta' : undefined}
+              class={item.href.includes('/contact/') ? 'nav-cta' : undefined}
               href={item.href}
               target={item.external ? '_blank' : undefined}
               rel={item.external ? 'noopener' : undefined}
@@ -70,8 +70,8 @@ const fullTitle = site.siteKey === 'main' ? title : `${title} | ${site.name}`;
             </a>
           ))}
           {
-            site.siteKey !== 'main' && !site.nav.some((i) => i.href.includes('/request-quote/')) && (
-              <a class="nav-cta" href={`${SITES.main}/request-quote/`} target="_blank" rel="noopener">Request a Quote</a>
+            site.siteKey !== 'main' && !site.nav.some((i) => i.href.includes('/contact/')) && (
+              <a class="nav-cta" href={`${SITES.main}/contact/`} target="_blank" rel="noopener">Request a Quote</a>
             )
           }
         </nav>

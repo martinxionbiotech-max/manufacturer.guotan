@@ -25,7 +25,8 @@ export const site: SiteConfig = {
     { label: 'Home', href: '/' },
     { label: 'Verification', href: '/verification/' },
     { label: 'How We Qualify', href: '/how-we-qualify/' },
-    { label: 'Request a Quote', href: `${SITES.main}/request-quote/`, external: true },
+    { label: 'Request a Quote', href: `${SITES.main}/contact/`, external: true },
+    { label: '← Main Site', href: `${SITES.main}/`, external: true },
   ],
   footerCols: [
     {
@@ -41,7 +42,7 @@ export const site: SiteConfig = {
       title: 'Charcoal Hub',
       links: [
         { label: 'Main Site', href: SITES.main, external: true },
-        { label: 'Request a Quote', href: `${SITES.main}/request-quote/`, external: true },
+        { label: 'Request a Quote', href: `${SITES.main}/contact/`, external: true },
         { label: 'Knowledge Hub', href: SITES.knowledge, external: true },
       ],
     },
