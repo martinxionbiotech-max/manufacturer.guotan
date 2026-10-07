@@ -1,0 +1,75 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { site } from '../data/site-config';
+import { SITES } from '../lib/sites';
+import { breadcrumbJsonLd } from '../lib/seo';
+
+const canonical = new URL(Astro.url.pathname, Astro.site).href;
+const crumbs = [
+  { name: 'Home', path: '/' },
+  { name: 'Privacy & Data Policy', path: '/privacy/' },
+];
+const jsonLd = [
+  breadcrumbJsonLd(crumbs.map((c) => ({ name: c.name, url: new URL(c.path, Astro.site).href }))),
+];
+---
+
+<BaseLayout
+  site={site}
+  title="Privacy & Data Policy"
+  description="Charcoal Hub manufacturer sub-site policy: how supplier profiles are verified, what verification statuses mean, and what this site does not collect."
+  canonical={canonical}
+  jsonLd={jsonLd}
+  breadcrumbs={crumbs.map((c) => ({ name: c.name, url: c.path }))}
+>
+  <div class="page-title container">
+    <h1>Privacy &amp; Data Policy</h1>
+    <p class="lede">
+      This sub-site publishes manufacturer and supplier qualification
+      intelligence. This page explains how profiles are sourced, verified and
+      labelled.
+    </p>
+  </div>
+
+  <section class="section">
+    <div class="container prose">
+      <p>Last updated: 2026-10-07</p>
+
+      <h2>1. What this sub-site publishes</h2>
+      <p>
+        Supplier profiles: company identity, product range, declared
+        operations and — where available — certifications and capacity. No
+        profile is published without a real source and a verification status.
+        Fields that are unknown are left empty, never invented.
+      </p>
+
+      <h2>2. Verification statuses</h2>
+      <ul>
+        <li><strong>Verified</strong> — backed by reliable sources or documented on-site/file verification.</li>
+        <li><strong>Supplier Reported</strong> — figures provided by the supplier's own public statements; not independently confirmed by us.</li>
+        <li><strong>Third-Party Verified</strong> — supported by independent testing or certification.</li>
+        <li><strong>Unverified</strong> — basic identity only.</li>
+      </ul>
+      <p>
+        A supplier-reported value is a claim, not a fact. Verify before you
+        contract. See the
+        <a href="/verification/">verification model</a> page for the full
+        methodology.
+      </p>
+
+      <h2>3. What we do not collect</h2>
+      <p>
+        No analytics, no tracking cookies, no advertising pixels. The hosting
+        platform may keep standard security logs under its own policy.
+      </p>
+
+      <h2>4. Inquiries</h2>
+      <p>
+        This sub-site has no forms. Network-wide terms: main site
+        <a href={`${SITES.main}/privacy/`}>privacy policy</a> and
+        <a href={`${SITES.main}/terms/`}>terms of use</a>. Contact:
+        <a href="mailto:sales@guotan.com">sales@guotan.com</a>.
+      </p>
+    </div>
+  </section>
+</BaseLayout>

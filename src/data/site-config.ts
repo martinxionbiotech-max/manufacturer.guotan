@@ -44,6 +44,8 @@ export const site: SiteConfig = {
         { label: 'Main Site', href: SITES.main, external: true },
         { label: 'Request a Quote', href: `${SITES.main}/contact/`, external: true },
         { label: 'Knowledge Hub', href: SITES.knowledge, external: true },
+        { label: 'Privacy & Data Policy', href: '/privacy/' },
+
       ],
     },
     {
