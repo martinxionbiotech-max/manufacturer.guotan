@@ -79,17 +79,24 @@ const jsonLd = [
 >
   <section class="hero">
     <div class="container">
-      <p class="eyebrow">Charcoal Hub · Manufacturer Sub-site</p>
-      <h1>Manufacturer intelligence built on verifiable evidence</h1>
-      <p class="lede">
-        This sub-site is the manufacturer and supplier-qualification layer of Charcoal Hub. Its
-        job is to describe <strong>how</strong> manufacturer data is sourced, labelled and
-        verified — and to publish a profile only once it can carry an honest verification status.
-      </p>
-      <div class="cta-row">
-        <a class="btn btn-primary" href={`${SITES.main}/request-quote/`} target="_blank" rel="noopener">Request a Quote</a>
-        <a class="btn btn-secondary" href="/verification/">How verification works</a>
-        <a class="btn btn-ghost" href="/how-we-qualify/">Our qualification process</a>
+      <div class="hero-inner">
+        <div class="hero-copy">
+          <p class="eyebrow">Charcoal Hub · Manufacturer Sub-site</p>
+          <h1>Manufacturer intelligence built on verifiable evidence</h1>
+          <p class="lede">
+            This sub-site is the manufacturer and supplier-qualification layer of Charcoal Hub. Its
+            job is to describe <strong>how</strong> manufacturer data is sourced, labelled and
+            verified — and to publish a profile only once it can carry an honest verification status.
+          </p>
+          <div class="cta-row">
+            <a class="btn btn-primary" href={`${SITES.main}/request-quote/`} target="_blank" rel="noopener">Request a Quote</a>
+            <a class="btn btn-secondary" href="/verification/">How verification works</a>
+            <a class="btn btn-ghost" href="/how-we-qualify/">Our qualification process</a>
+          </div>
+        </div>
+        <div class="hero-media">
+          <img src="/images/hero-production-line.webp" alt="Modern charcoal briquette press production line in a clean factory hall — conceptual illustration" width="1600" height="900" loading="eager" />
+        </div>
       </div>
     </div>
   </section>
@@ -107,9 +114,10 @@ const jsonLd = [
       </div>
 
       <div class="section-head">
+        <p class="section-kicker">01 · Scope</p>
         <h2>What this sub-site is</h2>
       </div>
-      <div class="grid grid-2">
+      <div class="grid grid-2 card-indexed">
         <div class="card">
           <h3>Manufacturer intelligence</h3>
           <p>
@@ -133,13 +141,14 @@ const jsonLd = [
   <section class="section section-alt">
     <div class="container">
       <div class="section-head">
+        <p class="section-kicker">02 · Method</p>
         <h2>The qualification model</h2>
         <p>
           Every manufacturer profile is a set of labelled fields. Qualification is the process of
           moving those fields from unconfirmed to confirmed. Three principles hold throughout:
         </p>
       </div>
-      <div class="grid grid-3">
+      <div class="grid grid-3 card-indexed">
         <div class="card">
           <h3>1 · No fabrication</h3>
           <p>Unknown data is left empty. A company name, location, capacity or certification is never invented to make a profile look complete.</p>
@@ -159,13 +168,14 @@ const jsonLd = [
   <section class="section">
     <div class="container">
       <div class="section-head">
+        <p class="section-kicker">03 · Vocabulary</p>
         <h2>The four verification statuses</h2>
         <p>
           These four levels are the vocabulary of this site. Every profile carries one of them,
           and the level is shown wherever the data is shown.
         </p>
       </div>
-      <div class="grid grid-2">
+      <div class="grid grid-2 card-indexed">
         {
           statuses.map((s) => (
             <div class="card">
@@ -187,6 +197,7 @@ const jsonLd = [
   <section class="section section-alt">
     <div class="container">
       <div class="section-head">
+        <p class="section-kicker">04 · Template</p>
         <h2>The manufacturer profile template</h2>
         <p>When a profile is published, it follows this fixed structure so profiles stay comparable:</p>
       </div>
