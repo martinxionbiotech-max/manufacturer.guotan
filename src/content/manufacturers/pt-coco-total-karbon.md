@@ -23,7 +23,7 @@ export_markets:
   - "Russia"
   - "UK"
   - "Bahrain"
-  - "Czech Republic
+  - "Czech Republic"
 oem: true
 private_label: true
 packaging:

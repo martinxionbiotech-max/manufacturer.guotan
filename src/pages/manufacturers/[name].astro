@@ -4,10 +4,10 @@
 /*                                                                     */
 /* ROUTE: /manufacturers/[name]/                                       */
 /*                                                                     */
-/* getStaticPaths() returns ZERO paths by design — the `manufacturers`  */
-/* collection is empty because no manufacturer profile is written      */
-/* until it has a real source and a verification status (§14).          */
-/* NO named manufacturer page is generated.                             */
+/* getStaticPaths() generates one page per published manufacturer       */
+/* profile. A profile is written only when it has a real source and a  */
+/* verification status (§14); unknown fields stay empty rather than    */
+/* being invented.                                                     */
 /*                                                                     */
 /* Fixed profile section order (§13):                                   */
 /*   1. Company Overview    2. Products       3. Manufacturing          */
@@ -31,7 +31,7 @@ interface Props {
 
 export async function getStaticPaths() {
   const manufacturers = await getCollection('manufacturers');
-  // Empty by design: zero manufacturer entries, zero generated pages.
+  // One page per published profile; profiles are never fabricated.
   return manufacturers.map((manufacturer) => ({
     params: { name: manufacturer.id },
     props: { manufacturer },

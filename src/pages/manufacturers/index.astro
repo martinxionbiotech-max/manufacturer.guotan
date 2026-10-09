@@ -13,7 +13,7 @@ const crumbs = [
   { name: 'Manufacturers', url: canonical },
 ];
 
-/* Published manufacturer profiles. Empty by design: no fabricated entries. */
+/* Published manufacturer profiles: 9 entries, each with a source and verification status. */
 const manufacturers = await getCollection('manufacturers');
 
 const jsonLd = [
@@ -30,7 +30,7 @@ const jsonLd = [
 <BaseLayout
   site={site}
   title="Manufacturer Directory"
-  description="The Charcoal Hub manufacturer directory. Profiles are published only once they carry a source and a verification status; the published set is currently empty pending supplier verification."
+  description="The Charcoal Hub manufacturer directory. Every profile carries a source and a verification status; profiles are never fabricated and unverified claims stay labelled as such."
   canonical={canonical}
   jsonLd={jsonLd}
   breadcrumbs={crumbs}

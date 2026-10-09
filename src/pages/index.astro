@@ -1,11 +1,20 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
 import { site } from '../data/site-config';
 import { SITES, BRAND } from '../lib/sites';
 import { organizationJsonLd, webSiteJsonLd, datasetJsonLd } from '../lib/seo';
 
 const origin = SITES.manufacturer;
 const canonical = `${origin}/`;
+
+const manufacturers = await getCollection('manufacturers');
+const byStatus = {
+  Verified: manufacturers.filter((m) => m.data.verification_status === 'Verified').length,
+  'Supplier Reported': manufacturers.filter((m) => m.data.verification_status === 'Supplier Reported').length,
+  'Third-Party Verified': manufacturers.filter((m) => m.data.verification_status === 'Third-Party Verified').length,
+  Unverified: manufacturers.filter((m) => m.data.verification_status === 'Unverified').length,
+};
 
 const statuses = [
   {
@@ -65,7 +74,8 @@ const jsonLd = [
     id: `${origin}/#manufacturer-schema`,
     name: 'Charcoal Hub manufacturer profile schema',
     description:
-      'The field schema (identity, operations, products, capacity, quality, verification) used for Charcoal Hub manufacturer profiles. Entries are published only after sourcing and verification; the published profile set is currently empty.',
+      'The field schema (identity, operations, products, capacity, quality, verification) used for Charcoal Hub manufacturer profiles. Entries are published with a source and a verification status; ' +
+        `${manufacturers.length} profiles are published today.`,
   }),
 ];
 ---
@@ -104,12 +114,13 @@ const jsonLd = [
   <section class="section">
     <div class="container">
       <div class="callout-pending">
-        <span class="callout-title">Manufacturer profiles: data pending — supplier verification in progress.</span>
+        <span class="callout-title">Manufacturer profiles: {manufacturers.length} published — {byStatus.Verified} Verified, {byStatus['Supplier Reported']} Supplier Reported, {byStatus['Third-Party Verified']} Third-Party Verified, {byStatus.Unverified} Unverified.</span>
         <p>
-          The published manufacturer set is currently <strong>empty by design</strong>. We do not
-          publish placeholder factories, sample companies, or invented examples. A profile appears
-          here only when it has a real source and a verification status. Until then, this site
-          documents the model, the process and the labels — nothing else.
+          We do not publish placeholder factories, sample companies, or invented
+          examples. A profile appears here only when it has a real source and a
+          verification status. Unverified profiles show the supplier's own claims,
+          labelled as such and never presented as fact. See the
+          <a href="/manufacturers/">manufacturer directory</a>.
         </p>
       </div>
 
@@ -223,8 +234,8 @@ const jsonLd = [
         </table>
       </div>
       <p class="meta-line" style="margin-top:1rem">
-        The template is documented now; the profiles it renders are pending verification.
-        See the <a href="/manufacturers/">manufacturer directory</a>.
+        The template is documented here; published profiles render in the
+        <a href="/manufacturers/">manufacturer directory</a>.
       </p>
     </div>
   </section>
