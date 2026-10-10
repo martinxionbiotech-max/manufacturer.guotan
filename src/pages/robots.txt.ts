@@ -29,7 +29,7 @@ export const GET: APIRoute = () => {
 
   const body =
     [
-      '# Charcoal Hub — manufacturer.guotan.com',
+      '# Charcoal Hub — manufacturer.chinacharcoalhub.com',
       '',
       'User-agent: *',
       'Allow: /',
