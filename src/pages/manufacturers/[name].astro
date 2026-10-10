@@ -42,7 +42,7 @@ const { manufacturer } = Astro.props;
 
 const origin = SITES.manufacturer;
 const name = manufacturer?.data.name ?? manufacturer?.id ?? 'Unknown manufacturer';
-const canonical = `${origin}/manufacturers/${manufacturer?.id ?? ''}`;
+const canonical = `${origin}/manufacturers/${manufacturer?.id ?? ''}/`;
 const crumbs = [
   { name: 'Home', url: `${origin}/` },
   { name: 'Manufacturers', url: `${origin}/manufacturers/` },
@@ -66,6 +66,7 @@ const list = (v: string[] | null | undefined) => (v && v.length ? v.join(', ') :
 <BaseLayout
   site={site}
   title={name}
+  bareTitle
   description="Manufacturer profile — data pending supplier verification."
   canonical={canonical}
   jsonLd={jsonLd}

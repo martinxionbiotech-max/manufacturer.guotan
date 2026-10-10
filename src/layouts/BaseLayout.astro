@@ -13,6 +13,8 @@ interface Props {
   ogType?: string;
   noindex?: boolean;
   breadcrumbs?: { name: string; url: string }[];
+  /** Company-name pages pass true: legal name alone is the title, no site suffix. */
+  bareTitle?: boolean;
 }
 
 const {
@@ -24,9 +26,10 @@ const {
   ogType = 'website',
   noindex = false,
   breadcrumbs = [],
+  bareTitle = false,
 } = Astro.props;
 
-const fullTitle = site.siteKey === 'main' ? title : `${title} | ${site.name}`;
+const fullTitle = site.siteKey === 'main' || bareTitle ? title : `${title} | ${site.name}`;
 ---
 
 <!DOCTYPE html>
