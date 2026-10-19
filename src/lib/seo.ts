@@ -27,6 +27,27 @@ export function breadcrumbJsonLd(items: { name: string; url: string }[]) {
 }
 
 /* ----------------------------- Organization ----------------------- */
+// 运营主体（与 xuanbaoenvironment.com 同公司实体，2026-10-19 自其线上 schema 提取）
+const COMPANY = {
+  legalName: 'Yancheng Xuanbao Environmental Technology Co., Ltd.',
+  alternateName: 'Xuanbao Environmental',
+  address: {
+    '@type': 'PostalAddress',
+    addressLocality: 'Yancheng',
+    addressRegion: 'Jiangsu',
+    addressCountry: 'CN',
+  },
+  foundingDate: '2020-05-12',
+  contactPoint: {
+    '@type': 'ContactPoint',
+    contactType: 'sales',
+    name: 'Joanna D.',
+    telephone: '+8615153588090',
+    email: 'joanna@dinweys.com',
+    availableLanguage: ['en', 'zh'],
+  },
+} as const;
+
 export function organizationJsonLd(o: {
   id: string;
   name: string;
@@ -38,9 +59,13 @@ export function organizationJsonLd(o: {
     '@context': 'https://schema.org',
     '@type': 'Organization',
     '@id': o.id,
-    name: o.name,
+    name: COMPANY.legalName,
+    alternateName: [COMPANY.alternateName, o.name],
     url: o.id,
     description: o.description,
+    address: COMPANY.address,
+    foundingDate: COMPANY.foundingDate,
+    contactPoint: COMPANY.contactPoint,
   };
   if (o.logo) out.logo = o.logo;
   if (o.sameAs && o.sameAs.length) out.sameAs = o.sameAs;
