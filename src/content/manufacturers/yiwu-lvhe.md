@@ -26,6 +26,7 @@ website: null
 verification_status: "Unverified"
 last_verified: "2026-10-07"
 data_source: "https://s.1688.com/kq/-D2ACBFC7C4BECCBF.html (public 1688 search listing)"
+meta_description: "Unverified manufacturer record: Yiwu Lvhe E-commerce Firm, Yiwu, China. Coconut shell square hookah charcoal; 1688 listing only."
 related_products: []
 ---
 

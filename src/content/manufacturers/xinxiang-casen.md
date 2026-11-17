@@ -27,6 +27,7 @@ website: null
 verification_status: "Unverified"
 last_verified: "2026-10-07"
 data_source: "https://www.alibaba.com/hookah-charcoal-suppliers.html (public Alibaba supplier listing)"
+meta_description: "Unverified manufacturer record: Xinxiang Casen Industrial Corporation, Xinxiang, China. Coconut shell and bamboo hookah charcoal; listing only."
 related_products: []
 ---
 

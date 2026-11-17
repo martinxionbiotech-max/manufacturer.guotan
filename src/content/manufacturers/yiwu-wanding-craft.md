@@ -28,6 +28,7 @@ website: null
 verification_status: "Unverified"
 last_verified: "2026-10-07"
 data_source: "https://www.alibaba.com/hookah-charcoal-suppliers.html (public Alibaba supplier listing)"
+meta_description: "Unverified manufacturer record: Yiwu Wanding Craft Company Limited, Yiwu, China. OEM coconut shell hookah charcoal; Alibaba listing only."
 related_products: []
 ---
 

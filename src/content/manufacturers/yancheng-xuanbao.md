@@ -2,6 +2,7 @@
 manufacturer_id: mfr-yancheng-xuanbao
 name: "Yancheng Xuanbao Environmental Technology Co., Ltd."
 location: "Dazonghu Town, Yandu District, Yancheng, Jiangsu, China"
+profile_role: "Operator entity"
 factory_type: "Environmental technology manufacturer — industrial catalysts, zeolite adsorbents and activated carbon"
 factory_area: null
 established: null
@@ -37,6 +38,18 @@ website: "https://xuanbaoenvironment.com/"
 verification_status: "Verified"
 last_verified: "2026-10-07"
 data_source: "Company brochures provided by the owner (2026-10-07); company profile data supplied directly by the company"
+documents:
+  - label: "Company brochures provided by the owner"
+    type: "Company document"
+    reference: "Two company brochures received 2026-10-07. Held on file; not published, so a reader cannot check them from this page."
+    check: "On file — not public"
+  - label: "Company website"
+    type: "Public listing"
+    reference: "xuanbaoenvironment.com — public site for the operating entity, covering industrial catalysts and adsorbents"
+    url: "https://xuanbaoenvironment.com/"
+    check: "Publicly checkable"
+entity_note: "This is the legal entity that operates Charcoal Hub. Its published product lines are industrial catalysts, zeolite adsorbents and activated carbon — not charcoal briquettes for hookah or barbecue. The profile is included for entity transparency, not as a charcoal supplier recommendation. No charcoal production capacity, customer or export claim is made for it."
+meta_description: "Charcoal Hub's operating entity, Yancheng, China. Industrial catalysts and activated carbon — not a charcoal briquette factory. Documents on file."
 related_products: []
 ---
 

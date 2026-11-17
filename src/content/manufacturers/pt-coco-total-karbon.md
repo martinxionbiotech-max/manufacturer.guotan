@@ -41,6 +41,17 @@ website: "https://charcoal.pro/"
 verification_status: "Supplier Reported"
 last_verified: "2026-10-07"
 data_source: "https://charcoal.pro/ (public company page; all figures supplier-declared, not independently verified by CHARCOAL HUB)"
+documents:
+  - label: "Company registration number (NIB), as stated by the supplier"
+    type: "Supplier-stated reference"
+    reference: "NIB 0220001680488, printed on the company's public page. The Indonesian registry record itself was not retrieved during this review."
+    check: "Supplier-stated — not independently checked"
+  - label: "Company website"
+    type: "Public listing"
+    reference: "charcoal.pro — supplier-run site carrying the capacity, MOQ and price figures quoted below"
+    url: "https://charcoal.pro/"
+    check: "Publicly checkable"
+meta_description: "Supplier-reported profile: PT Coco Total Karbon (Charcoal.pro), Magelang, Indonesia. Coconut shell hookah briquettes; figures are self-declared."
 related_products: []
 ---
 

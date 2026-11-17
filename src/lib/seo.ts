@@ -128,6 +128,33 @@ export function datasetJsonLd(o: {
   return out;
 }
 
+/* ----------------------------- ProfilePage ------------------------ */
+/* A manufacturer page is a profile of another organisation, not the  */
+/* publisher's own Organisation node. Only the name and the published */
+/* description are emitted — never capacity, certifications or        */
+/* ratings, which would turn an unverified claim into schema fact.    */
+export function profilePageJsonLd(o: {
+  id: string;
+  name: string;
+  description: string;
+  subjectName: string;
+  webSiteId: string;
+}) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'ProfilePage',
+    '@id': o.id,
+    url: o.id,
+    name: o.name,
+    description: o.description,
+    isPartOf: { '@type': 'WebSite', '@id': o.webSiteId },
+    mainEntity: {
+      '@type': 'Organization',
+      name: o.subjectName,
+    },
+  };
+}
+
 /* ----------------------------- Product ---------------------------- */
 /* Only emitted when a product has real verified fields.              */
 export function productJsonLd(o: {

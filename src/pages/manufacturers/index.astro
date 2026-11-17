@@ -4,6 +4,7 @@ import { getCollection } from 'astro:content';
 import { site } from '../../data/site-config';
 import { SITES } from '../../lib/sites';
 import { breadcrumbJsonLd, organizationJsonLd } from '../../lib/seo';
+import { STATUS_META, compareByStatus, statusMeta } from '../../lib/evidence';
 
 const origin = SITES.manufacturer;
 const canonical = `${origin}/manufacturers/`;
@@ -13,8 +14,42 @@ const crumbs = [
   { name: 'Manufacturers', url: canonical },
 ];
 
-/* Published manufacturer profiles: 9 entries, each with a source and verification status. */
-const manufacturers = await getCollection('manufacturers');
+/* Published manufacturer profiles, strongest status first. */
+const manufacturers = (await getCollection('manufacturers')).sort((a, b) =>
+  compareByStatus(a.data, b.data),
+);
+
+const supplierProfiles = manufacturers.filter((m) => m.data.profile_role !== 'Operator entity');
+const operatorProfiles = manufacturers.filter((m) => m.data.profile_role === 'Operator entity');
+
+const count = (status: string) =>
+  supplierProfiles.filter((m) => m.data.verification_status === status).length;
+
+const counts = {
+  total: supplierProfiles.length,
+  thirdParty: count('Third-Party Verified'),
+  verified: count('Verified'),
+  supplier: count('Supplier Reported'),
+  unverified: count('Unverified'),
+};
+
+const withoutStatus = supplierProfiles.filter((m) => !m.data.verification_status).length;
+
+/* A document reference "beyond the profile's own website" is the      */
+/* meaningful count: a storefront link proves the listing exists, not  */
+/* that the company does.                                              */
+const withDocument = supplierProfiles.filter((m) =>
+  (m.data.documents ?? []).some((d) => d.type !== 'Public listing'),
+).length;
+const withRegistry = supplierProfiles.filter((m) =>
+  (m.data.documents ?? []).some((d) => d.type === 'Public registry'),
+).length;
+const withCompanyDoc = supplierProfiles.filter((m) =>
+  (m.data.documents ?? []).some((d) => d.type === 'Company document'),
+).length;
+const withSupplierRef = supplierProfiles.filter((m) =>
+  (m.data.documents ?? []).some((d) => d.type === 'Supplier-stated reference'),
+).length;
 
 const jsonLd = [
   organizationJsonLd({
@@ -30,7 +65,7 @@ const jsonLd = [
 <BaseLayout
   site={site}
   title="Manufacturer Directory"
-  description="The Charcoal Hub manufacturer directory. Every profile carries a source and a verification status; profiles are never fabricated and unverified claims stay labelled as such."
+  description="Charcoal Hub manufacturer directory: 9 profiles, each with a verification status and source. Unverified records are labelled as leads, not qualified suppliers."
   canonical={canonical}
   jsonLd={jsonLd}
   breadcrumbs={crumbs}
@@ -39,14 +74,87 @@ const jsonLd = [
     <div class="page-title">
       <h1>Manufacturer directory</h1>
       <p class="lede">
-        Every profile in this directory follows the same structure and carries a verification
-        status for each field.
+        Every profile follows the same structure and carries one verification status covering its
+        published fields. The status is shown on the card, on the profile, and next to any document
+        reference.
       </p>
     </div>
   </div>
 
   <section class="section">
     <div class="container">
+      <div class="callout-pending">
+        <span class="callout-title">
+          {counts.total} supplier profiles published — {counts.verified} Verified, {counts.supplier}
+          Supplier Reported, {counts.thirdParty} Third-Party Verified, {counts.unverified} Unverified.
+        </span>
+        <p>
+          {withDocument} of {counts.total} carry a document reference beyond their own website:
+          {withRegistry} public registry record, {withCompanyDoc} company document held on file and
+          {withSupplierRef} supplier-stated registration number. The rest are lead records built from
+          a public listing. {operatorProfiles.length} further record is Charcoal Hub’s own operating entity
+          (company brochures held on file, not a charcoal supplier), excluded from every supplier
+          count.
+        </p>
+        <p>
+          <strong>Unverified means unqualified.</strong> An unverified profile is a candidate
+          supplier, not a supplier we can vouch for. It has not been checked against any independent
+          source, and nothing on it should be treated as a fact until it is qualified.
+        </p>
+      </div>
+
+      <div class="section-head">
+        <h2>Status legend</h2>
+        <p>
+          The four statuses below are the whole vocabulary of this site. They describe how well
+          supported a record is — not how good a supplier is.
+        </p>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>Status</th><th>What it means on a card</th><th>Profiles</th></tr>
+          </thead>
+          <tbody>
+            {
+              ['Third-Party Verified', 'Verified', 'Supplier Reported', 'Unverified'].map((key) => {
+                const s = STATUS_META[key];
+                const n =
+                  key === 'Third-Party Verified'
+                    ? counts.thirdParty
+                    : key === 'Verified'
+                      ? counts.verified
+                      : key === 'Supplier Reported'
+                        ? counts.supplier
+                        : counts.unverified;
+                return (
+                  <tr>
+                    <td><span class={`badge ${s.cls}`}>{s.label}</span></td>
+                    <td>{s.oneLine}</td>
+                    <td>{n}</td>
+                  </tr>
+                );
+              })
+            }
+          </tbody>
+        </table>
+      </div>
+      <p class="meta-line" style="margin-top:1rem">
+        Full definitions and boundary rules: <a href="/verification/">verification model</a>.
+      </p>
+
+      <div class="section-head" style="margin-top:2.5rem">
+        <h2>Published profiles</h2>
+        <p>
+          Sorted by verification status, then alphabetically. This is <strong>not a ranking</strong>,
+          quality score or recommendation — a stronger status only means more of the record has been
+          checked.
+        </p>
+        {withoutStatus > 0 && (
+          <p class="meta-line">{withoutStatus} profile(s) carry no status and sort last.</p>
+        )}
+      </div>
+
       {
         manufacturers.length === 0 ? (
           <div class="callout-pending">
@@ -54,21 +162,34 @@ const jsonLd = [
             <p>
               There are currently <strong>no published manufacturer profiles</strong>. This is a
               deliberate, honest state: we do not fill the directory with invented companies or
-              placeholder factories. A profile appears here only when it has a real source and a
-              verification status.
+              placeholder factories.
             </p>
           </div>
         ) : (
           <div class="grid grid-2">
-            {manufacturers.map((m) => (
-              <div class="card">
-                <h3><a href={`/manufacturers/${m.id}/`}>{m.data.name ?? m.id}</a></h3>
-                <p>{m.data.location ?? 'Location not yet verified.'}</p>
-                {m.data.verification_status && (
-                  <span class="badge badge-muted">{m.data.verification_status}</span>
-                )}
-              </div>
-            ))}
+            {manufacturers.map((m) => {
+              const meta = statusMeta(m.data.verification_status);
+              const docs = m.data.documents ?? [];
+              const docCount = docs.filter((d) => d.type !== 'Public listing').length;
+              return (
+                <div class="card">
+                  <h3><a href={`/manufacturers/${m.id}/`}>{m.data.name ?? m.id}</a></h3>
+                  <p class="meta-line">{m.data.location ?? 'Location not recorded'}</p>
+                  <p>
+                    <span class={`badge ${meta.cls}`}>{meta.label}</span>
+                    {m.data.profile_role === 'Operator entity' && (
+                      <span class="badge badge-muted" style="margin-left:0.4rem">Operator entity</span>
+                    )}
+                  </p>
+                  <p>{meta.oneLine}</p>
+                  <p class="meta-line">
+                    {docCount > 0
+                      ? `${docCount} document reference${docCount === 1 ? '' : 's'} beyond the profile website`
+                      : 'No document reference — public listing only'}
+                  </p>
+                </div>
+              );
+            })}
           </div>
         )
       }
@@ -94,7 +215,7 @@ const jsonLd = [
       <div class="cta-banner">
         <h2>Need a manufacturer qualified?</h2>
         <p>The sourcing desk accepts briefs and returns supplier information with its verification status attached.</p>
-        <a class="btn btn-primary" href={`${SITES.main}/contact/`} target="_blank" rel="noopener">Request a Quote</a>
+        <a class="btn btn-primary" href={`${SITES.main}/request-quote/`} target="_blank" rel="noopener">Request a Quote</a>
       </div>
     </div>
   </section>

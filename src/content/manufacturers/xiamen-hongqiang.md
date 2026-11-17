@@ -15,8 +15,7 @@ applications:
   - "Hookah / shisha"
 production_capacity: null
 production_lines: null
-export_markets:
-  - "UK-registered trading entity (Companies House, incorporated 2014)"
+export_markets: null
 oem: null
 private_label: null
 packaging: null
@@ -28,6 +27,19 @@ website: "https://fjhongqiang.en.alibaba.com/"
 verification_status: "Supplier Reported"
 last_verified: "2026-10-07"
 data_source: "https://fjhongqiang.en.alibaba.com/ + UK Companies House company 08974143 (public records)"
+documents:
+  - label: "UK Companies House record — HONG QIANG CHARCOAL INDUSTRY LIMITED"
+    type: "Public registry"
+    reference: "Company 08974143: active, private limited company, incorporated 2 April 2014, registered office in Beckenham, UK, nature of business SIC 99999 — Dormant Company."
+    url: "https://find-and-update.company-information.service.gov.uk/company/08974143"
+    check: "Publicly checkable"
+  - label: "Alibaba storefront"
+    type: "Public listing"
+    reference: "fjhongqiang.en.alibaba.com — supplier-run storefront carrying the product and MOQ claims below"
+    url: "https://fjhongqiang.en.alibaba.com/"
+    check: "Publicly checkable"
+entity_note: "The UK company registration is real but dormant: its filed nature of business is SIC 99999 (Dormant Company), with a registered office in Beckenham rather than a factory. It is not evidence of UK trading, warehousing or manufacturing capacity, and no such claim is made here."
+meta_description: "Supplier-reported profile: Xiamen Hongqiang Charcoal, Xiamen, China. Coconut shell hookah charcoal; UK company record is dormant, not a trading site."
 related_products: []
 ---
 

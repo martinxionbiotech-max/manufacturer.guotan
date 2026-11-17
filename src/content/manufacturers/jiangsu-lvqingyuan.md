@@ -24,6 +24,7 @@ website: null
 verification_status: "Unverified"
 last_verified: "2026-10-07"
 data_source: "https://s.1688.com/kq/-D2ACBFC7CCBC.html (public 1688 search listing)"
+meta_description: "Unverified manufacturer record: Jiangsu Lvqingyuan Charcoal Technology Co., Ltd., Yixing, China. Coconut shell charcoal; name and listing only."
 related_products: []
 ---
 

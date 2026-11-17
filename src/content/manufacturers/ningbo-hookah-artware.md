@@ -26,6 +26,7 @@ website: null
 verification_status: "Unverified"
 last_verified: "2026-10-07"
 data_source: "https://www.alibaba.com/hookah-charcoal-suppliers.html (public Alibaba supplier listing)"
+meta_description: "Unverified manufacturer record: Ningbo Hookah Artware Co., Ltd., Ningbo, China. Natural wood hookah charcoal; name and listing only."
 related_products: []
 ---
 

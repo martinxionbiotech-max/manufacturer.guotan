@@ -4,16 +4,19 @@ import { getCollection } from 'astro:content';
 import { site } from '../data/site-config';
 import { SITES, BRAND } from '../lib/sites';
 import { organizationJsonLd, webSiteJsonLd, datasetJsonLd } from '../lib/seo';
+import { EVIDENCE_BOUNDARY_RULES } from '../lib/evidence';
 
 const origin = SITES.manufacturer;
 const canonical = `${origin}/`;
 
 const manufacturers = await getCollection('manufacturers');
+const supplierProfiles = manufacturers.filter((m) => m.data.profile_role !== 'Operator entity');
+const operatorProfiles = manufacturers.filter((m) => m.data.profile_role === 'Operator entity');
 const byStatus = {
-  Verified: manufacturers.filter((m) => m.data.verification_status === 'Verified').length,
-  'Supplier Reported': manufacturers.filter((m) => m.data.verification_status === 'Supplier Reported').length,
-  'Third-Party Verified': manufacturers.filter((m) => m.data.verification_status === 'Third-Party Verified').length,
-  Unverified: manufacturers.filter((m) => m.data.verification_status === 'Unverified').length,
+  Verified: supplierProfiles.filter((m) => m.data.verification_status === 'Verified').length,
+  'Supplier Reported': supplierProfiles.filter((m) => m.data.verification_status === 'Supplier Reported').length,
+  'Third-Party Verified': supplierProfiles.filter((m) => m.data.verification_status === 'Third-Party Verified').length,
+  Unverified: supplierProfiles.filter((m) => m.data.verification_status === 'Unverified').length,
 };
 
 const statuses = [
@@ -83,7 +86,7 @@ const jsonLd = [
 <BaseLayout
   site={site}
   title="Manufacturer Intelligence"
-  description="How Charcoal Hub collects, labels and verifies manufacturer data for coconut shell and biomass charcoal. Profiles are published only with a source and a verification status."
+  description="How Charcoal Hub sources, labels and verifies manufacturer data for coconut shell and biomass charcoal. Every profile carries a source and a status."
   canonical={canonical}
   jsonLd={jsonLd}
 >
@@ -99,8 +102,9 @@ const jsonLd = [
             verified — and to publish a profile only once it can carry an honest verification status.
           </p>
           <div class="cta-row">
-            <a class="btn btn-primary" href={`${SITES.main}/contact/`} target="_blank" rel="noopener">Request a Quote</a>
-            <a class="btn btn-secondary" href="/verification/">How verification works</a>
+            <a class="btn btn-primary" href={`${SITES.main}/request-quote/`} target="_blank" rel="noopener">Request a Quote</a>
+            <a class="btn btn-secondary" href="/manufacturers/">Browse {supplierProfiles.length} supplier profiles</a>
+            <a class="btn btn-ghost" href="/verification/">How verification works</a>
             <a class="btn btn-ghost" href="/how-we-qualify/">Our qualification process</a>
           </div>
         </div>
@@ -114,12 +118,18 @@ const jsonLd = [
   <section class="section">
     <div class="container">
       <div class="callout-pending">
-        <span class="callout-title">Manufacturer profiles: {manufacturers.length} published — {byStatus.Verified} Verified, {byStatus['Supplier Reported']} Supplier Reported, {byStatus['Third-Party Verified']} Third-Party Verified, {byStatus.Unverified} Unverified.</span>
+        <span class="callout-title">
+          {supplierProfiles.length} supplier profiles — {byStatus.Verified} Verified,
+          {byStatus['Supplier Reported']} Supplier Reported, {byStatus['Third-Party Verified']}
+          Third-Party Verified, {byStatus.Unverified} Unverified. Plus {operatorProfiles.length}
+          operator-entity record, excluded from supplier counts.
+        </span>
         <p>
           We do not publish placeholder factories, sample companies, or invented
           examples. A profile appears here only when it has a real source and a
-          verification status. Unverified profiles show the supplier's own claims,
-          labelled as such and never presented as fact. See the
+          verification status. Supplier-reported figures are labelled as
+          self-reported; unverified records are marked as unchecked leads, not
+          qualified suppliers. See the
           <a href="/manufacturers/">manufacturer directory</a>.
         </p>
       </div>
@@ -199,9 +209,15 @@ const jsonLd = [
           ))
         }
       </div>
-      <p class="meta-line" style="margin-top:1.5rem">
-        Read the full model on the <a href="/verification/">verification page</a>.
-      </p>
+      <div class="callout-pending" style="margin-top:1.5rem">
+        <span class="callout-title">What a status does not tell you</span>
+        <ul>
+          {EVIDENCE_BOUNDARY_RULES.map((rule) => <li>{rule}</li>)}
+        </ul>
+        <p class="meta-line">
+          Full definitions on the <a href="/verification/">verification page</a>.
+        </p>
+      </div>
     </div>
   </section>
 
@@ -249,7 +265,7 @@ const jsonLd = [
           process described on this site, and any manufacturer data you receive is labelled with
           its verification status.
         </p>
-        <a class="btn btn-primary" href={`${SITES.main}/contact/`} target="_blank" rel="noopener">Request a Quote</a>
+        <a class="btn btn-primary" href={`${SITES.main}/request-quote/`} target="_blank" rel="noopener">Request a Quote</a>
       </div>
       <p class="meta-line">
         Related: <a href={`${SITES.data}/products/`} target="_blank" rel="noopener">Product Database</a> ·

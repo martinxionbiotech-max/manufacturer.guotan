@@ -35,6 +35,18 @@ website: "https://yaparacoal.com/"
 verification_status: "Supplier Reported"
 last_verified: "2026-10-07"
 data_source: "https://yaparacoal.com/ (public company page; supplier-declared, not independently verified by CHARCOAL HUB)"
+documents:
+  - label: "Company registration number (NIB), as stated by the supplier"
+    type: "Supplier-stated reference"
+    reference: "NIB 0208260112482, printed on the company's about page. The Indonesian registry record itself was not retrieved during this review. The same page states 250 tonnes/month and an establishment year of 2026; both are supplier-declared and unverified."
+    url: "https://www.yaparacoal.com/about/"
+    check: "Supplier-stated — not independently checked"
+  - label: "Company website"
+    type: "Public listing"
+    reference: "yaparacoal.com — supplier-run site carrying the product-range and three-factory statements below"
+    url: "https://yaparacoal.com/"
+    check: "Publicly checkable"
+meta_description: "Supplier-reported profile: Yaparacoal Indonesia, Jepara, Central Java. Coconut shell, BBQ and sawdust charcoal; capacity and MOQ self-declared."
 related_products: []
 ---
 

@@ -3,6 +3,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import { site } from '../../data/site-config';
 import { SITES } from '../../lib/sites';
 import { breadcrumbJsonLd, organizationJsonLd } from '../../lib/seo';
+import { EVIDENCE_BOUNDARY_RULES } from '../../lib/evidence';
 
 const origin = SITES.manufacturer;
 const canonical = `${origin}/verification/`;
@@ -57,7 +58,7 @@ const jsonLd = [
 <BaseLayout
   site={site}
   title="Verification Model"
-  description="How Charcoal Hub labels manufacturer data: Verified, Supplier Reported, Third-Party Verified and Unverified — and why 'Supplier Reported' is not a verified fact."
+  description="How Charcoal Hub labels manufacturer data: Verified, Supplier Reported, Third-Party Verified and Unverified — and why supplier-reported is not a fact."
   canonical={canonical}
   jsonLd={jsonLd}
   breadcrumbs={crumbs}
@@ -66,9 +67,9 @@ const jsonLd = [
     <div class="page-title">
       <h1>Verification model</h1>
       <p class="lede">
-        Every manufacturer profile field carries one of four verification statuses. Statuses
-        describe <em>how well supported</em> a value is — not how good a supplier is. A single
-        profile can hold fields at different levels, and each is labelled where it appears.
+        Every manufacturer profile carries one of four verification statuses. A status describes
+        <em>how well supported</em> a record is — not how good a supplier is. Where an individual
+        field rests on a different basis, that basis is noted beside the field.
       </p>
     </div>
   </div>
@@ -144,6 +145,56 @@ const jsonLd = [
     </div>
   </section>
 
+  <section class="section section-alt">
+    <div class="container">
+      <div class="prose">
+        <h2>What counts as a document reference</h2>
+        <p>
+          A profile may carry document references. Each one states how far it has been checked,
+          because “a document exists” and “we have checked the document” are different claims.
+        </p>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Reference type</th><th>Example</th><th>What it can support</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="spec-value">Public registry</td>
+                <td>A company register entry with a number, status and filing history</td>
+                <td>Legal identity and registration facts, if the register is current</td>
+              </tr>
+              <tr>
+                <td class="spec-value">Company document</td>
+                <td>A brochure, licence or specification supplied by the company</td>
+                <td>The fields the document actually covers — not the rest of the profile</td>
+              </tr>
+              <tr>
+                <td class="spec-value">Supplier-stated reference</td>
+                <td>A registration number printed on the supplier’s own page</td>
+                <td>That the supplier makes the statement; not that the registry agrees</td>
+              </tr>
+              <tr>
+                <td class="spec-value">Public listing</td>
+                <td>A marketplace storefront run by the supplier</td>
+                <td>That the listing exists and what it advertises</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p>
+          A reference never upgrades a whole profile. It supports the specific fields it covers,
+          and the profile’s status stays where the weakest published claim puts it.
+        </p>
+
+        <h3>Boundary rules</h3>
+        <ul>
+          {EVIDENCE_BOUNDARY_RULES.map((rule) => <li>{rule}</li>)}
+        </ul>
+      </div>
+    </div>
+  </section>
+
   <section class="section">
     <div class="container">
       <div class="prose">
@@ -205,7 +256,7 @@ const jsonLd = [
           The Charcoal Hub sourcing desk will return manufacturer information with the verification
           status of each field included.
         </p>
-        <a class="btn btn-primary" href={`${SITES.main}/contact/`} target="_blank" rel="noopener">Request a Quote</a>
+        <a class="btn btn-primary" href={`${SITES.main}/request-quote/`} target="_blank" rel="noopener">Request a Quote</a>
       </div>
     </div>
   </section>

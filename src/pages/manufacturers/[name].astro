@@ -15,15 +15,17 @@
 /*   7. OEM                  8. Packaging      9. Export                */
 /*  10. Verification        11. Related Products 12. Request Quote      */
 /*                                                                     */
-/* If the entry is ever undefined (defensive fallback) the route        */
-/* renders the "data pending" state instead of a half-empty profile.    */
+/* The status is stated three times on purpose: as a badge, as a       */
+/* plain-language reading, and as a caveat about what it does NOT      */
+/* prove. An unverified record must never read like a qualified one.   */
 /* ------------------------------------------------------------------ */
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { getCollection } from 'astro:content';
 import type { CollectionEntry } from 'astro:content';
 import { site } from '../../data/site-config';
 import { SITES } from '../../lib/sites';
-import { breadcrumbJsonLd, organizationJsonLd } from '../../lib/seo';
+import { breadcrumbJsonLd, profilePageJsonLd, webSiteJsonLd } from '../../lib/seo';
+import { statusMeta, EVIDENCE_BOUNDARY_RULES } from '../../lib/evidence';
 
 interface Props {
   manufacturer?: CollectionEntry<'manufacturers'>;
@@ -49,25 +51,46 @@ const crumbs = [
   { name, url: canonical },
 ];
 
-const jsonLd = [
-  organizationJsonLd({
-    id: `${origin}/`,
-    name: site.name,
-    description: site.description,
-    logo: `${origin}/logo.svg`,
-  }),
-  breadcrumbJsonLd(crumbs),
-];
+const meta = statusMeta(manufacturer?.data.verification_status);
+const description =
+  manufacturer?.data.meta_description ??
+  `${name} — manufacturer profile published with its verification status.`;
+
+const jsonLd = manufacturer
+  ? [
+      webSiteJsonLd({
+        id: `${origin}/#website`,
+        name: site.name,
+        description: site.description,
+      }),
+      profilePageJsonLd({
+        id: canonical,
+        name,
+        description,
+        subjectName: name,
+        webSiteId: `${origin}/#website`,
+      }),
+      breadcrumbJsonLd(crumbs),
+    ]
+  : [breadcrumbJsonLd(crumbs)];
 
 /* Fields left blank when unknown — never invented (§12). */
 const list = (v: string[] | null | undefined) => (v && v.length ? v.join(', ') : null);
+const show = (v: string | number | null | undefined) =>
+  v === null || v === undefined || v === '' ? 'Not recorded' : v;
+const flagText = (v: boolean | null | undefined) =>
+  v === null || v === undefined ? 'Not recorded' : v ? 'Available' : 'Not available';
+
+const documents = manufacturer?.data.documents ?? [];
+const checkClass = (check: string) =>
+  check === 'Publicly checkable' ? 'badge-ok' : 'badge-warn';
 ---
 
 <BaseLayout
   site={site}
   title={name}
   bareTitle
-  description="Manufacturer profile — data pending supplier verification."
+  description={description}
   canonical={canonical}
   jsonLd={jsonLd}
   breadcrumbs={crumbs}
@@ -97,69 +120,144 @@ const list = (v: string[] | null | undefined) => (v && v.length ? v.join(', ') :
       ) : (
         <>
           <div class="page-title">
+            <p class="eyebrow">Manufacturer profile</p>
             <h1>{name}</h1>
-            {manufacturer.data.verification_status && (
-              <span class="badge badge-muted">{manufacturer.data.verification_status}</span>
-            )}
+            <p class="lede">
+              <span class={`badge ${meta.cls}`}>{meta.label}</span>
+              <span style="margin-left:0.6rem">{meta.oneLine}</span>
+            </p>
+            <p class="meta-line">
+              {show(manufacturer.data.location)} · Profile ID {manufacturer.data.manufacturer_id ?? manufacturer.id}
+              {manufacturer.data.profile_role === 'Operator entity' && ' · Operator entity, not a charcoal supplier'}
+            </p>
           </div>
 
           <section class="section">
+            <div class={meta.cls === 'status-unverified' ? 'callout-pending' : 'callout'}>
+              <span class="callout-title">
+                {meta.label} — evidence level {meta.evidence}: {meta.evidenceLabel}
+              </span>
+              <p>{meta.caveat}</p>
+              <p class="meta-line">
+                Source basis: {show(manufacturer.data.data_source)} · Last reviewed{' '}
+                {show(manufacturer.data.last_verified)}. Read the
+                <a href="/verification/">verification model</a>.
+              </p>
+            </div>
+
+            {manufacturer.data.entity_note && (
+              <div class="callout-pending" style="margin-top:1rem">
+                <span class="callout-title">Note on this record</span>
+                <p>{manufacturer.data.entity_note}</p>
+              </div>
+            )}
+
+            <p class="meta-line">
+              Fields marked “Not recorded” have no source. They are left empty rather than guessed.
+            </p>
+
             <h2>1 · Company Overview</h2>
             <div class="quick-facts">
-              <div class="qf"><span class="qf-label">Location</span><span class="qf-value">{manufacturer.data.location ?? '—'}</span></div>
-              <div class="qf"><span class="qf-label">Factory type</span><span class="qf-value">{manufacturer.data.factory_type ?? '—'}</span></div>
-              <div class="qf"><span class="qf-label">Factory area</span><span class="qf-value">{manufacturer.data.factory_area ?? '—'}</span></div>
-              <div class="qf"><span class="qf-label">Established</span><span class="qf-value">{manufacturer.data.established ?? '—'}</span></div>
+              <div class="qf"><span class="qf-label">Location</span><span class="qf-value">{show(manufacturer.data.location)}</span></div>
+              <div class="qf"><span class="qf-label">Factory type</span><span class="qf-value">{show(manufacturer.data.factory_type)}</span></div>
+              <div class="qf"><span class="qf-label">Factory area</span><span class="qf-value">{show(manufacturer.data.factory_area)}</span></div>
+              <div class="qf"><span class="qf-label">Established</span><span class="qf-value">{show(manufacturer.data.established)}</span></div>
             </div>
 
             <h2>2 · Products</h2>
-            <p>{list(manufacturer.data.main_products) ?? '—'}</p>
+            <p>{list(manufacturer.data.main_products) ?? 'Not recorded'}</p>
 
             <h2>3 · Manufacturing</h2>
-            <p><strong>Raw materials:</strong> {list(manufacturer.data.raw_materials) ?? '—'}</p>
-            <p><strong>Applications:</strong> {list(manufacturer.data.applications) ?? '—'}</p>
+            <p><strong>Raw materials:</strong> {list(manufacturer.data.raw_materials) ?? 'Not recorded'}</p>
+            <p><strong>Applications:</strong> {list(manufacturer.data.applications) ?? 'Not recorded'}</p>
 
             <h2>4 · Production Capacity</h2>
-            <p><strong>Capacity:</strong> {manufacturer.data.production_capacity ?? '—'}</p>
-            <p><strong>Production lines:</strong> {manufacturer.data.production_lines ?? '—'}</p>
+            <p><strong>Capacity:</strong> {show(manufacturer.data.production_capacity)}</p>
+            <p><strong>Production lines:</strong> {show(manufacturer.data.production_lines)}</p>
 
             <h2>5 · Quality Control</h2>
-            <p>{list(manufacturer.data.quality_control) ?? '—'}</p>
+            <p>{list(manufacturer.data.quality_control) ?? 'Not recorded'}</p>
 
             <h2>6 · Testing</h2>
-            <p>{list(manufacturer.data.testing) ?? '—'}</p>
+            <p>{list(manufacturer.data.testing) ?? 'Not recorded'}</p>
 
             <h2>7 · OEM</h2>
-            <p>{manufacturer.data.oem === null || manufacturer.data.oem === undefined ? '—' : manufacturer.data.oem ? 'Available' : 'Not available'}</p>
-            <p><strong>Private label:</strong> {manufacturer.data.private_label === null || manufacturer.data.private_label === undefined ? '—' : manufacturer.data.private_label ? 'Available' : 'Not available'}</p>
+            <p><strong>OEM:</strong> {flagText(manufacturer.data.oem)}</p>
+            <p><strong>Private label:</strong> {flagText(manufacturer.data.private_label)}</p>
 
             <h2>8 · Packaging</h2>
-            <p>{list(manufacturer.data.packaging) ?? '—'}</p>
+            <p>{list(manufacturer.data.packaging) ?? 'Not recorded'}</p>
 
             <h2>9 · Export</h2>
-            <p><strong>Export markets:</strong> {list(manufacturer.data.export_markets) ?? '—'}</p>
-            <p><strong>MOQ:</strong> {manufacturer.data.moq ?? '—'}</p>
+            <p><strong>Export markets:</strong> {list(manufacturer.data.export_markets) ?? 'Not recorded'}</p>
+            <p><strong>MOQ:</strong> {show(manufacturer.data.moq)}</p>
 
             <h2>10 · Verification</h2>
             <div class="table-wrap">
               <table>
                 <tbody>
-                  <tr><th>Status</th><td>{manufacturer.data.verification_status ?? '—'}</td></tr>
-                  <tr><th>Source</th><td>{manufacturer.data.data_source ?? '—'}</td></tr>
-                  <tr><th>Certifications</th><td>{list(manufacturer.data.certifications) ?? '—'}</td></tr>
-                  <tr><th>Last verified</th><td>{manufacturer.data.last_verified ?? '—'}</td></tr>
-                  <tr><th>Website</th><td>{manufacturer.data.website ?? '—'}</td></tr>
+                  <tr><th>Status</th><td><span class={`badge ${meta.cls}`}>{meta.label}</span></td></tr>
+                  <tr><th>Evidence level</th><td>{meta.evidence} — {meta.evidenceLabel}</td></tr>
+                  <tr><th>Basis</th><td>{show(manufacturer.data.data_source)}</td></tr>
+                  <tr><th>Last reviewed</th><td>{show(manufacturer.data.last_verified)}</td></tr>
+                  <tr><th>Website</th><td>
+                    {manufacturer.data.website
+                      ? <a href={manufacturer.data.website} target="_blank" rel="noopener nofollow">{manufacturer.data.website}</a>
+                      : 'Not recorded'}
+                  </td></tr>
+                  <tr><th>Certifications (as stated)</th><td>{list(manufacturer.data.certifications) ?? 'None recorded'}</td></tr>
                 </tbody>
               </table>
             </div>
 
+            <h3>Document references</h3>
+            {
+              documents.length === 0 ? (
+                <p>
+                  No document reference is held for this profile. The record rests on the public
+                  listing named as its basis, which is not a company document.
+                </p>
+              ) : (
+                <div class="table-wrap">
+                  <table>
+                    <thead>
+                      <tr><th>Document</th><th>Type</th><th>Reference</th><th>How far it is checked</th></tr>
+                    </thead>
+                    <tbody>
+                      {documents.map((d) => (
+                        <tr>
+                          <td class="spec-value">
+                            {d.url ? <a href={d.url} target="_blank" rel="noopener nofollow">{d.label}</a> : d.label}
+                          </td>
+                          <td>{d.type}</td>
+                          <td>{d.reference}</td>
+                          <td><span class={`badge ${checkClass(d.check)}`}>{d.check}</span></td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )
+            }
+            <p class="meta-line">
+              A document reference shows what exists. It does not upgrade the whole profile: status
+              applies to the fields the document actually supports.
+            </p>
+
+            <h3>What this status does not tell you</h3>
+            <ul>
+              {EVIDENCE_BOUNDARY_RULES.map((rule) => <li>{rule}</li>)}
+            </ul>
+
             <h2>11 · Related Products</h2>
-            <p>{list(manufacturer.data.related_products) ?? '—'}</p>
+            <p>{list(manufacturer.data.related_products) ?? 'None recorded'}</p>
 
             <h2>12 · Request Quote</h2>
             <p>
-              <a href={`${SITES.main}/contact/`} target="_blank" rel="noopener">Request a quote</a>
-              for this manufacturer through the Charcoal Hub sourcing desk.
+              Send a specification to the Charcoal Hub sourcing desk for a
+              <a href={`${SITES.main}/request-quote/`} target="_blank" rel="noopener">quote request</a>.
+              Any manufacturer data returned with it carries the same verification status shown on
+              this page.
             </p>
           </section>
         </>
