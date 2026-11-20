@@ -73,8 +73,8 @@ const fullTitle = site.siteKey === 'main' || bareTitle ? title : `${title} | ${s
             </a>
           ))}
           {
-            site.siteKey !== 'main' && !site.nav.some((i) => i.href.includes('/contact/')) && (
-              <a class="nav-cta" href={`${SITES.main}/contact/`} target="_blank" rel="noopener">Request a Quote</a>
+            site.siteKey !== 'main' && (
+              <a class="nav-cta" href={`${SITES.main}/request-quote/`} target="_blank" rel="noopener">Request a Quote</a>
             )
           }
         </nav>
